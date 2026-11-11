@@ -114,6 +114,11 @@ negative_test!(agt021_negative, "AGT021/jailbreak_negative.md", "AGT021");
 // AGT040 — Image exfil
 positive_test!(agt040_positive, "AGT040/image_exfil_positive.md", "AGT040");
 negative_test!(agt040_negative, "AGT040/image_exfil_negative.md", "AGT040");
+positive_test!(
+    agt040_placeholder_positive,
+    "AGT040/placeholder_param_positive.md",
+    "AGT040"
+);
 
 // AGT042 — Sensitive paths
 positive_test!(

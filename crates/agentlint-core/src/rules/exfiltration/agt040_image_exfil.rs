@@ -16,6 +16,12 @@ const DATA_PARAMS: &[&str] = &[
     "token=", "secret=", "key=", "value=", "body=", "output=", "result=", "info=", "context=",
 ];
 
+// Query values that look like slots for the model to fill in: SECRET_DATA,
+// {context}, <summary>. Catches exfil sinks that use short or unusual param names.
+static PLACEHOLDER_RE: Lazy<Regex> = Lazy::new(|| {
+    Regex::new(r"=(?:[A-Z][A-Z0-9]*_[A-Z0-9_]{2,}|\{[^}]{2,}\}|%7B[^&]{2,}%7D|<[^>]{2,}>)").unwrap()
+});
+
 // Domains that are local/safe (not exfil sinks)
 const LOCAL_DOMAINS: &[&str] = &["localhost", "127.0.0.1", "0.0.0.0", "::1"];
 
@@ -71,7 +77,8 @@ impl Rule for Agt040ImageExfil {
             // Check for data-carrying query params
             if let Some(query_start) = url.find('?') {
                 let query = &url[query_start + 1..];
-                let has_data_param = DATA_PARAMS.iter().any(|p| query.contains(p));
+                let has_data_param =
+                    DATA_PARAMS.iter().any(|p| query.contains(p)) || PLACEHOLDER_RE.is_match(query);
                 if has_data_param {
                     let span = source.byte_range_to_span(full_match.start(), full_match.end());
                     findings.push(
