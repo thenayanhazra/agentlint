@@ -1,18 +1,44 @@
 # agentlint
 
-A fast static analyzer for AI agent configuration files. Detects prompt injection, hidden instructions, and dangerous tool patterns in files that LLM agents read as instructions.
+[![CI](https://github.com/thenayanhazra/Skill-Agent-File-Linter/actions/workflows/ci.yml/badge.svg)](https://github.com/thenayanhazra/Skill-Agent-File-Linter/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+**Checks the instruction files AI agents load (skills, project rules, MCP configs) for hidden attacks before an agent ever reads them.**
+
+Agent instruction files are this decade's macros: plain text that a machine treats as commands, copied between repositories and pulled in from public skill marketplaces. agentlint scans them for invisible Unicode, override attempts, data-exfiltration tricks and dangerous tool configurations. It runs in milliseconds, from the terminal or as a GitHub Action.
+
+## Why it matters
+
+- **People review these files, and attackers hide from people.** A right-to-left override can make `report.exe` display as `report.pdf`. A zero-width character can split a phrase so it slips past review. The file looks clean to a reviewer and reads differently to the model.
+- **One poisoned skill compromises every agent that loads it.** Catching it at pull-request time is the cheapest control there is.
+- **It fits the pipeline you already run.** SARIF output feeds GitHub code scanning, and exit codes fail the build on critical findings.
+
+## What you get
+
+Scanning [a sample skill](examples/poisoned-skill/SKILL.md) that presents itself as a harmless PDF summariser:
 
 ```
-agentlint check SKILL.md
-  critical[AGT001]: Bidirectional control character U+202E RIGHT-TO-LEFT OVERRIDE at line 3, col 24
-   --> SKILL.md:3:24
-   help: Remove bidirectional control characters...
-   fix available: run `agentlint fix`
+$ agentlint check examples/poisoned-skill/SKILL.md
+examples/poisoned-skill/SKILL.md
+  critical[AGT042]: Sensitive path or credential reference: '~/.aws/'
+   --> examples/poisoned-skill/SKILL.md:14:26
+  error[AGT002]: Zero-width character U+200B ZERO WIDTH SPACE at line 14, col 84
+   --> examples/poisoned-skill/SKILL.md:14:84
+  error[AGT040]: Image URL with data-carrying query string: https://telemetry.example.net/p?d=SUMMARY_AND_CONTEXT
+   --> examples/poisoned-skill/SKILL.md:15:27
+  critical[AGT020]: Instruction override pattern: 'ignore previous instructions'
+   --> examples/poisoned-skill/SKILL.md:17:25
+  critical[AGT001]: Bidirectional control character U+202E RIGHT-TO-LEFT OVERRIDE at line 19, col 20
+   --> examples/poisoned-skill/SKILL.md:19:20
+  critical[AGT001]: Bidirectional control character U+202C POP DIRECTIONAL FORMATTING at line 19, col 28
+   --> examples/poisoned-skill/SKILL.md:19:28
+
+Found 6 finding(s) in 1 file(s): 4 critical, 2 error, 0 warn, 0 info
 ```
 
-## Why
+Each finding links to a rule with an explanation (`agentlint explain AGT040`), and the Unicode findings can be repaired automatically with `agentlint fix`.
 
-Agent config files are the new macros: untrusted, executable-as-instructions, often committed to repos and pulled in transitively via dependencies, templates, and skill marketplaces. Existing linters don't see them. A poisoned `SKILL.md` in a popular skill pack is a supply-chain compromise of every agent that loads it.
+---
 
 ## Supported File Types
 
@@ -42,8 +68,6 @@ See [RULES.md](RULES.md) for the full taxonomy.
 ```bash
 cargo install --path crates/agentlint-cli
 ```
-
-Or download a pre-built binary from [Releases](https://github.com/thenayanhazra/Skill-Agent-File-Linter/releases).
 
 ## Usage
 
