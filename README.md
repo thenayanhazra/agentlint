@@ -38,6 +38,8 @@ Found 6 finding(s) in 1 file(s): 4 critical, 2 error, 0 warn, 0 info
 
 Each finding links to a rule with an explanation (`agentlint explain AGT040`), and the Unicode findings can be repaired automatically with `agentlint fix`.
 
+> **Part of a kit.** This tool is one of four that [AI Security Assessment](https://github.com/thenayanhazra/ai-security-assessment) runs together against an AI agent platform, combining their findings into one executive report.
+
 ---
 
 ## Supported File Types
