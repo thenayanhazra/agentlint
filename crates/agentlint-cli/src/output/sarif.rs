@@ -29,7 +29,7 @@ pub fn build(result: &ScanResult) -> serde_json::Value {
                 "driver": {
                     "name": "agentlint",
                     "version": env!("CARGO_PKG_VERSION"),
-                    "informationUri": "https://github.com/thenayanhazra/skill-agent-file-linter",
+                    "informationUri": "https://github.com/thenayanhazra/agentlint",
                     "rules": rules
                 }
             },

@@ -1,6 +1,6 @@
 # agentlint
 
-[![CI](https://github.com/thenayanhazra/skill-agent-file-linter/actions/workflows/ci.yml/badge.svg)](https://github.com/thenayanhazra/skill-agent-file-linter/actions/workflows/ci.yml)
+[![CI](https://github.com/thenayanhazra/agentlint/actions/workflows/ci.yml/badge.svg)](https://github.com/thenayanhazra/agentlint/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 **Checks the instruction files AI agents load (skills, project rules, MCP configs) for hidden attacks before an agent ever reads them.**
@@ -112,7 +112,7 @@ Add to your workflow:
 
 ```yaml
 - name: Scan agent configuration files
-  uses: thenayanhazra/skill-agent-file-linter@main
+  uses: thenayanhazra/agentlint@main
   with:
     paths: '.'
     severity: warn
