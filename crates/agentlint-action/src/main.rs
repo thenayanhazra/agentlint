@@ -134,7 +134,7 @@ fn build_sarif_result(
                 "driver": {
                     "name": "agentlint",
                     "version": env!("CARGO_PKG_VERSION"),
-                    "informationUri": "https://github.com/thenayanhazra/Skill-Agent-File-Linter"
+                    "informationUri": "https://github.com/thenayanhazra/skill-agent-file-linter"
                 }
             },
             "results": results,
